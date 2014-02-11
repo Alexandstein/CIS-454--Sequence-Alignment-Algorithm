@@ -93,7 +93,6 @@ class Aligner:
 		cursor = (self.dims[0] - 1, self.dims[1] - 1)
 		parent = self.cells[cursor[0]][cursor[1]].parent
 		while not (cursor[0] < 0 or cursor[1] < 0):
-			print parent
 			if(parent == (-1,0) or parent == (0,-1)):
 				output = output + 'g'
 			else:
@@ -139,10 +138,15 @@ class Aligner:
 		#Exception cause due to missing cell. Fill in cell.
 		except:
 			#Base cases
-			if x == y == -1:
-				return Cell(0)
-			elif x == -1 or y == -1:
-				return Cell(sys.maxint)
+			if x == 0 and y == 0:
+				self.cells[x][y] = Cell(0)
+				return self.cells[x][y]
+			elif x == 0:
+				self.cells[x][y] = Cell(y * self.penalties['gap'], (0,-1))
+				return self.cells[x][y]
+			elif y == 0:
+				self.cells[x][y] = Cell(x * self.penalties['gap'], (0,-1))
+				return self.cells[x][y]
 			#Recursive cases
 			outputs = (
 			           Cell(int(self.evaluateCell(x-1,y-1)) + c,(-1,-1)),
@@ -161,10 +165,12 @@ class Aligner:
 		Return:
 			Int value for alignment score.
 		'''
-		
+#		for i in range(self.dims[1]):
+#			for j in range(self.dims[0]):
+#				self.evaluateCell(self.dims[0] - 1,self.dims[1] - 1)
 		self.evaluateCell(self.dims[0] - 1,self.dims[1] - 1)
 
-if __name__ == '__main__':
+def main():
 	s1 = raw_input("Enter your first sequence: ")
 	s2 = raw_input("Enter another sequence: ")
 	
@@ -189,6 +195,8 @@ if __name__ == '__main__':
 				continue
 	
 	alignment.align()
-	print alignment.traceBack()
 	print alignment
-	
+	print alignment.traceBack()
+
+if __name__ == '__main__':
+	main()
